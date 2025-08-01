@@ -214,27 +214,6 @@ python src/lerobot/scripts/isaac/convert_isaac_to_lerobot.py \
 4. **数据类型**: 统一转换为float32格式
 5. **帧同步**: 确保观测和动作的时间对齐
 
-## 扩展和定制
-
-### 添加新的遥操作设备
-1. 继承 `Se3Device` 基类
-2. 实现 `advance()` 方法
-3. 在 `main()` 函数中添加设备选项
-
-### 自定义数据格式
-1. 修改 `DataCollector` 类的 `_save_episode()` 方法
-2. 调整观测数据的预处理逻辑
-3. 添加额外的元数据字段
-
-### 自定义转换逻辑
-1. 修改 `convert_isaac_to_lerobot.py` 中的 `FRANKA_FEATURES` 定义
-2. 调整 `preprocess_se3_actions()` 函数来处理不同的动作格式
-3. 添加新的观测数据处理
-
-### 集成新的任务
-1. 确保任务符合 Isaac Lab ManagerBasedEnv 接口
-2. 根据需要修改 `pre_process_actions()` 函数
-3. 添加任务特定的终止条件
 
 ## 策略评估
 
@@ -287,6 +266,28 @@ python src/lerobot/scripts/isaac/eval_policy_isaac.py \
 - `eval_results.json`: 详细的评估指标和每回合结果
 - `episode_XXX.mp4`: 评估视频（如果启用）
 - 控制台输出包含成功率、平均奖励等关键指标
+
+## 扩展和定制
+
+### 添加新的遥操作设备
+1. 继承 `Se3Device` 基类
+2. 实现 `advance()` 方法
+3. 在 `main()` 函数中添加设备选项
+
+### 自定义数据格式
+1. 修改 `DataCollector` 类的 `_save_episode()` 方法
+2. 调整观测数据的预处理逻辑
+3. 添加额外的元数据字段
+
+### 自定义转换逻辑
+1. 修改 `convert_isaac_to_lerobot.py` 中的 `FRANKA_FEATURES` 定义
+2. 调整 `preprocess_se3_actions()` 函数来处理不同的动作格式
+3. 添加新的观测数据处理
+
+### 集成新的任务
+1. 确保任务符合 Isaac Lab ManagerBasedEnv 接口
+2. 根据需要修改 `pre_process_actions()` 函数
+3. 添加任务特定的终止条件
 
 ## 许可证
 

@@ -1,4 +1,6 @@
-# Isaac Lab 遥操作数据录制脚本
+# LeRobot: LeRobot + Isaac
+
+🤖 **LeRobot** 集成了LeRobot和Isaac Lab，提供从数据收集、策略训练到部署的Isaac环境中的完整解决方案。
 
 ## 概述
 
@@ -40,27 +42,28 @@
 - **视频录制**: 自动保存评估过程视频
 - **批量评估**: 支持多回合并行评估
 
-## 命令行参数
 
-### 基本参数
+## 快速开始
+
+### 安装
+
+1. **克隆仓库**
 ```bash
---num_envs          # 并行环境数量 (默认: 1)
---teleop_device     # 遥操作设备类型 (默认: "keyboard")
---task              # Isaac Lab 任务名称
---sensitivity       # 控制灵敏度 (默认: 3.0)
---seed              # 随机种子 (默认: 42)
---enable_pinocchio  # 启用 Pinocchio 物理引擎
---enable_cameras    # 启用相机渲染和录制
+git clone https://github.com/Elycyx/IeRobot.git
+cd ierobot
 ```
 
-### 录制参数
+2. **安装IsaacLab**
 ```bash
---record            # 启用数据录制功能
---step_hz           # 环境步进频率 (默认: 60 Hz)
---dataset_file      # 数据集保存路径 (默认: "./datasets/isaac_dataset.hdf5")
---num_demos         # 录制演示数量，0 表示无限制 (默认: 0)
---fps               # 视频录制 FPS (默认: 30)
---auto_success      # 自动检测任务成功并完成episode
+git clone https://github.com/Elycyx/IsaacLab.git
+```
+然后按照IsaacLab官方的[安装教程](https://isaac-sim.github.io/IsaacLab/main/source/setup/installation/pip_installation.html)进行安装。
+
+3. **安装依赖**
+```bash
+cd ierobot
+pip install -e .
+
 ```
 
 ## 使用方法
@@ -153,151 +156,6 @@ python src/lerobot/scripts/isaac/teleop_se3_agent_with_recording.py \
 - **实时跟踪**: 手部位置和姿态直接映射到机器人末端执行器
 - **夹爪控制**: 通过手指姿态控制夹爪开合
 
-## 数据格式
-
-### HDF5 文件结构
-```
-dataset.hdf5
-├── episode_000000/
-│   ├── observations/
-│   │   ├── policy/ (嵌套观测组)
-│   │   │   ├── state (机器人状态数据)
-│   │   │   ├── actions (上一步动作)
-│   │   │   ├── main_cam (主视角相机图像)
-│   │   │   └── wrist_cam (手腕相机图像)
-│   │   └── other_obs (其他非嵌套观测)
-│   ├── actions
-│   ├── rewards
-│   ├── dones
-│   ├── timestamps
-│   └── attrs (元数据)
-├── episode_000001/
-│   └── ...
-└── attrs (数据集元数据)
-```
-
-### 数据内容和类型
-- **observations**: 包含机器人状态、相机图像等所有观测信息
-  - **嵌套观测组**：如`policy`组包含多个子观测（state, actions, cameras等）
-  - **数值数据**：直接保存为HDF5数组
-  - **图像数据**：相机观测保存为图像数组
-  - **复杂数据**：序列化为JSON字符串
-  - **变长数据**：每个时间步单独保存
-  - **数据类型标记**：通过`data_type`属性区分('numeric', 'nested_observations', 'serialized', 'variable_shape')
-- **actions**: 执行的动作序列（SE(3) 位姿 + 夹爪命令）
-- **rewards**: 每步的奖励值
-- **dones**: 回合结束标志
-- **timestamps**: 每步的时间戳
-- **metadata**: 任务名称、FPS、回合长度等元信息
-
-### 数据兼容性
-- **嵌套观测结构**：自动处理Isaac Lab的观测组（ObsGroup）结构
-- **递归数据保存**：支持任意层次的嵌套观测字典
-- **PyTorch张量转换**：自动处理PyTorch张量到NumPy的转换
-- **多种数据类型**：支持不同形状和类型的观测数据
-- **错误处理**：对无法直接保存的数据类型提供警告信息
-- **存储优化**：自动将float64转换为float32以节省存储空间
-
-## 核心类说明
-
-### RateLimiter 类
-```python
-class RateLimiter:
-    """控制仿真循环频率的工具类"""
-    def __init__(self, hz: int)
-    def sleep(self, env)
-```
-- 确保仿真以指定频率运行
-- 在等待期间继续渲染画面
-- 自动检测和处理时间跳跃
-
-### DataCollector 类
-```python
-class DataCollector:
-    """数据录制和管理类"""
-    def start_recording()          # 开始录制新回合
-    def stop_recording(success)    # 停止录制并可选保存
-    def record_step(obs, actions, rewards, dones, infos)  # 录制单步数据
-    def close()                    # 关闭并保存最终数据
-```
-- 实时收集和缓存演示数据
-- 支持成功/失败回合的区别处理
-- 自动处理 PyTorch 张量到 NumPy 的转换
-- 线程安全的文件操作
-
-## 支持的任务
-
-### 单臂任务
-- `Isaac-Lift-Cube-Franka-v0`: Franka 机器人举起立方体
-- `Isaac-Reach-Franka-v0`: Franka 机器人到达目标位置
-- `Isaac-Stack-Cube-Franka-v0`: 堆叠立方体任务
-
-### 双臂任务
-- `Isaac-PickPlace-GR1T2-v0`: GR1T2 人形机器人拾取放置任务
-- 需要启用 `--enable_pinocchio` 选项
-
-### 自定义任务
-脚本支持任何符合 Isaac Lab 接口的自定义任务。
-
-## 故障排除
-
-### 常见问题
-
-1. **Gymnasium 版本兼容性**
-   ```
-   ValueError: too many values to unpack (expected 4)
-   ```
-   - 脚本已自动处理新旧版本的 Gymnasium
-   - 新版本返回 5 个值：(obs, reward, terminated, truncated, info)
-   - 旧版本返回 4 个值：(obs, reward, done, info)
-   - 脚本会自动检测并适配不同版本
-
-2. **HDF5 数据保存问题**
-   ```
-   TypeError: Object dtype dtype('O') has no native HDF5 equivalent
-   警告：跳过无法保存的观测数据 'policy'，数据类型：<class 'numpy.ndarray'>
-   ```
-   - 脚本已自动处理不同数据类型和嵌套结构
-   - **嵌套观测**：自动处理Isaac Lab的ObsGroup结构
-   - **复杂数据**：自动序列化为JSON字符串
-   - **变长数据**：分别保存每个时间步
-   - **递归保存**：支持任意层次的观测嵌套
-   - 无法保存的数据会显示警告而不会崩溃
-
-3. **设备连接问题**
-   ```bash
-   # 检查 SpaceMouse 连接
-   ls /dev/input/
-   
-   # 检查权限
-   sudo chmod 666 /dev/input/event*
-   ```
-
-2. **录制文件权限**
-   ```bash
-   # 确保输出目录存在且可写
-   mkdir -p ./datasets
-   chmod 755 ./datasets
-   ```
-
-3. **内存不足**
-   - 减少 `--step_hz` 频率
-   - 定期保存数据（设置较小的 `--num_demos`）
-   - 监控系统内存使用
-
-4. **仿真性能问题**
-   - 降低 `--num_envs` 数量
-   - 调整渲染设置
-   - 使用 GPU 加速
-
-### 调试模式
-```bash
-# 启用详细日志
-export OMNI_LOG_LEVEL=info
-
-# 检查 Isaac Sim 状态
-python -c "import omni.isaac.sim; print('Isaac Sim available')"
-```
 
 ## 数据转换
 
@@ -433,61 +291,9 @@ python src/lerobot/scripts/isaac/eval_policy_isaac.py \
 - `episode_XXX.mp4`: 评估视频（如果启用）
 - 控制台输出包含成功率、平均奖励等关键指标
 
-## 快速开始指南
-
-### 完整工作流程：从录制到训练到评估
-
-```bash
-# 1. 录制演示数据
-python src/lerobot/scripts/isaac/teleop_se3_agent_with_recording.py \
-    --task Isaac-Lift-Cube-Franka-IK-Rel-visumotor-v0 \
-    --teleop_device keyboard \
-    --record \
-    --auto_success \
-    --num_demos 10 \
-    --dataset_file ./datasets/franka_lift_demos.hdf5
-
-# 2. 转换为LeRobot格式
-python src/lerobot/scripts/isaac/convert_isaac_to_lerobot.py \
-    --input_files ./datasets/franka_lift_demos.hdf5 \
-    --output_repo_id "your-username/franka-lift-dataset" \
-    --task "Lift cube to 20cm height" \
-    --push_to_hub
-
-# 3. 使用LeRobot训练策略
-python lerobot/scripts/train.py \
-    dataset_repo_id=your-username/franka-lift-dataset \
-    policy=act \
-    env=isaac_lab
-
-# 4. 评估训练的策略
-python src/lerobot/scripts/isaac/eval_policy_isaac.py \
-    --policy_path "your-username/franka-lift-dataset" \
-    --task Isaac-Lift-Cube-Franka-IK-Rel-visumotor-v0 \
-    --n_episodes 20 \
-    --save_videos
-```
-
-### 最佳实践建议
-
-1. **录制质量**
-   - 每个演示保持动作流畅和一致
-   - 确保任务成功完成（使用 `--auto_success` 或手动按M键）
-   - 录制10-50个高质量演示比100个低质量演示更有效
-
-2. **数据多样性**
-   - 变化起始位置和物体位置
-   - 包含不同的成功路径
-   - 避免重复完全相同的动作序列
-
-3. **转换设置**
-   - 使用 `--skip_frames 5` 跳过不稳定的初始帧
-   - 设置合适的 `--fps` 匹配录制频率
-   - 为数据集选择描述性的 `--task` 名称
-
 ## 许可证
 
-本脚本基于 Isaac Lab 项目，遵循 BSD-3-Clause 许可证。
+本项目基于 [LeRobot](https://github.com/huggingface/lerobot) 和 [Isaac Lab](https://github.com/isaac-sim/IsaacLab) 项目，参考[LeIsaac](https://github.com/LightwheelAI/leisaac) 项目，遵循 BSD-3-Clause 许可证。
 
 ## 贡献
 

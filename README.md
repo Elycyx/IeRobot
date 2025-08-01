@@ -1,37 +1,37 @@
-# LeRobot: LeRobot + Isaac
+# 🚀 LeRobot: LeRobot + Isaac
 
 🤖 **LeRobot** 集成了LeRobot和Isaac Lab，提供从数据收集、策略训练到部署的Isaac环境中的完整解决方案。
 
 
-## 主要功能
+## ✨ 主要功能
 
-### 1. 多设备支持
+### 🎮 1. 多设备支持
 - **键盘控制**: 使用 WASD 等按键进行 SE(3) 控制
 - **SpaceMouse**: 3D 鼠标进行直观的空间控制
 - **游戏手柄**: 使用手柄摇杆和按键控制
 - **手部跟踪**: 支持 OpenXR 手部跟踪和 GR1T2 人形机器人控制
 
-### 2. 数据录制功能
+### 💾 2. 数据录制功能
 - **HDF5 格式**: 将演示数据保存为 HDF5 文件格式
 - **实时录制**: 在遥操作过程中实时录制观测、动作、奖励等数据
 - **回合管理**: 支持标记成功回合并自动保存
 - **自动完成检测**: 可选的自动检测环境done并完成episode
 - **元数据**: 自动保存时间戳、任务信息、FPS 等元数据
 
-### 3. 控制功能
+### 🎛️ 3. 控制功能
 - **环境重置**: 随时重置环境到初始状态
 - **录制控制**: 开始/停止录制，标记成功回合
 - **自动完成检测**: 检测环境done信号并自动保存演示
 - **频率控制**: 可配置的仿真频率和录制 FPS
 - **优雅退出**: 支持键盘中断并安全保存数据
 
-### 4. 数据转换功能
+### 🔄 4. 数据转换功能
 - **LeRobot兼容**: 将Isaac Lab数据转换为LeRobot训练格式
 - **智能预处理**: 自动处理SE(3)到关节空间的动作转换
 - **多文件支持**: 批量转换多个录制文件
 - **HuggingFace集成**: 直接上传到HuggingFace Hub
 
-### 5. 策略评估功能
+### 📊 5. 策略评估功能
 - **LeRobot策略兼容**: 支持评估LeRobot训练的策略
 - **Isaac Lab环境**: 在真实的物理仿真环境中测试
 - **自动格式转换**: 智能处理观测和动作数据格式
@@ -40,9 +40,9 @@
 - **批量评估**: 支持多回合并行评估
 
 
-## 快速开始
+## 🚦 快速开始
 
-### 安装
+### 🔧 安装
 
 1. **克隆仓库**
 ```bash
@@ -63,7 +63,7 @@ pip install -e .
 
 ```
 
-## 使用方法
+## 📖 使用方法
 
 ### 1. 基本遥操作（无录制）
 ```bash
@@ -129,7 +129,7 @@ python src/lerobot/scripts/isaac/teleop_se3_agent_with_recording.py \
     --record
 ```
 
-## 控制说明
+## 🎯 控制说明
 
 ### 键盘控制
 - **R**: 重置环境
@@ -154,7 +154,7 @@ python src/lerobot/scripts/isaac/teleop_se3_agent_with_recording.py \
 - **夹爪控制**: 通过手指姿态控制夹爪开合
 
 
-## 数据转换
+## 🔄 数据转换
 
 录制完成后，您可以使用 `convert_isaac_to_lerobot.py` 将Isaac Lab数据转换为LeRobot格式，用于策略训练。
 
@@ -215,7 +215,7 @@ python src/lerobot/scripts/isaac/convert_isaac_to_lerobot.py \
 5. **帧同步**: 确保观测和动作的时间对齐
 
 
-## 策略评估
+## 📊 策略评估
 
 录制和训练完成后，您可以使用 `eval_policy_isaac.py` 在Isaac Lab环境中评估训练的策略。
 
@@ -267,7 +267,7 @@ python src/lerobot/scripts/isaac/eval_policy_isaac.py \
 - `episode_XXX.mp4`: 评估视频（如果启用）
 - 控制台输出包含成功率、平均奖励等关键指标
 
-## 扩展和定制
+## 🔧 扩展和定制
 
 ### 添加新的遥操作设备
 1. 继承 `Se3Device` 基类
@@ -289,11 +289,11 @@ python src/lerobot/scripts/isaac/eval_policy_isaac.py \
 2. 根据需要修改 `pre_process_actions()` 函数
 3. 添加任务特定的终止条件
 
-## 许可证
+## 📄 许可证
 
 本项目基于 [LeRobot](https://github.com/huggingface/lerobot) 和 [Isaac Lab](https://github.com/isaac-sim/IsaacLab) 项目，参考[LeIsaac](https://github.com/LightwheelAI/leisaac) 项目，遵循 BSD-3-Clause 许可证。
 
-## 贡献
+## 🤝 贡献
 
 欢迎提交问题报告和功能请求。请确保：
 1. 代码符合项目风格指南

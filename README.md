@@ -2,9 +2,6 @@
 
 🤖 **LeRobot** 集成了LeRobot和Isaac Lab，提供从数据收集、策略训练到部署的Isaac环境中的完整解决方案。
 
-## 概述
-
-`teleop_se3_agent_with_recording.py` 是一个基于 Isaac Lab 的遥操作脚本，支持多种输入设备并具备数据录制功能。该脚本允许用户通过键盘、SpaceMouse、游戏手柄或手部跟踪设备来控制机器人，同时可以录制演示数据用于机器学习训练。
 
 ## 主要功能
 

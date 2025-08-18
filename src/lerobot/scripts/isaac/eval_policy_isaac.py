@@ -97,6 +97,37 @@ from lerobot.utils.random_utils import set_seed
 import json
 
 
+def get_task_description_for_environment(task_name: str) -> str:
+    """
+    Get appropriate task description for VLA models based on Isaac Lab environment.
+    
+    Args:
+        task_name: Isaac Lab task name
+        
+    Returns:
+        Task description string
+    """
+    task_descriptions = {
+        "Isaac-Lift-Cube-Franka-IK-Rel-visumotor-v0": "Lift up the cube.",
+    }
+    
+    # Return specific description if available, otherwise a generic one
+    if task_name in task_descriptions:
+        return task_descriptions[task_name]
+    else:
+        # Extract the main task from the name
+        if "Lift" in task_name:
+            return "Pick up the object and lift it"
+        elif "Reach" in task_name:
+            return "Reach to the target position"
+        elif "Push" in task_name:
+            return "Push the object to the target"
+        elif "Stack" in task_name:
+            return "Stack the objects"
+        else:
+            return "Complete the robotic manipulation task"
+
+
 def load_policy_from_path(policy_path: str, device: str) -> PreTrainedPolicy:
     """
     直接使用具体策略类的from_pretrained方法加载策略。
@@ -208,8 +239,8 @@ class IsaacLabToLeRobotObsAdapter:
                 image_tensor = self._process_image(tensor_value, key)
                 # Images should be (C, H, W), will add batch dim later
                 lerobot_obs[f'observation.images.{key}'] = image_tensor
-            else:
-                # Keep other observations as is
+            elif key not in ['actions', 'action']:  # Skip action fields from observations
+                # Keep other relevant observations
                 lerobot_obs[f'observation.{key}'] = tensor_value
                 
         return lerobot_obs
@@ -301,7 +332,8 @@ def run_isaac_episode(
     rate_limiter: Optional[RateLimiter] = None,
     max_steps: Optional[int] = None,
     save_video: bool = False,
-    seed: Optional[int] = None
+    seed: Optional[int] = None,
+    task_name: Optional[str] = None
 ) -> Dict[str, Any]:
     """
     Run a single episode with the policy in Isaac Lab environment.
@@ -356,11 +388,25 @@ def run_isaac_episode(
             else:
                 batch_obs[key] = value
         
+        # Add task description for VLA models (like SmolVLA)
+        if hasattr(policy, 'config') and hasattr(policy.config, 'vlm_model_name'):
+            # This is a VLA model that needs task description
+            # Use provided task_name or fallback to a generic task  
+            current_task_name = task_name or 'Isaac-Lift-Cube-Franka-IK-Rel-visumotor-v0'
+            task_description = get_task_description_for_environment(current_task_name)
+            batch_obs["task"] = task_description
+            
+            if step_count == 0:  # Log the task description once per episode
+                print(f"VLA Task description: {task_description}")
+        
         # Debug: print batch observation shapes
         if step_count == 0:
             print("Batched observation shapes:")
             for key, value in batch_obs.items():
-                print(f"  {key}: {value.shape}")
+                if isinstance(value, torch.Tensor):
+                    print(f"  {key}: {value.shape}")
+                else:
+                    print(f"  {key}: {type(value)} - {value}")
         
         # Get action from policy
         with torch.inference_mode():
@@ -504,7 +550,8 @@ def evaluate_policy_isaac(
             rate_limiter=rate_limiter,
             max_steps=args_cli.max_episode_length,
             save_video=save_video_this_episode,
-            seed=args_cli.seed + episode_idx
+            seed=args_cli.seed + episode_idx,
+            task_name=task
         )
         
         episode_results.append(episode_result)

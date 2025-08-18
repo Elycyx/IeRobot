@@ -1,43 +1,11 @@
-# 🚀 LeRobot: LeRobot + Isaac
+# 🚀 IeRobot: LeRobot + Isaac
 
-🤖 **LeRobot** 集成了LeRobot和Isaac Lab，提供从数据收集、策略训练到部署的Isaac环境中的完整解决方案。
+🤖 **IeRobot** 集成了LeRobot和Isaac Lab，提供从数据收集、策略训练到部署的Isaac环境中的完整解决方案。
 
+## 📝 更新日志
 
-## ✨ 主要功能
-
-### 🎮 1. 多设备支持
-- **键盘控制**: 使用 WASD 等按键进行 SE(3) 控制
-- **SpaceMouse**: 3D 鼠标进行直观的空间控制
-- **游戏手柄**: 使用手柄摇杆和按键控制
-- **手部跟踪**: 支持 OpenXR 手部跟踪和 GR1T2 人形机器人控制
-
-### 💾 2. 数据录制功能
-- **HDF5 格式**: 将演示数据保存为 HDF5 文件格式
-- **实时录制**: 在遥操作过程中实时录制观测、动作、奖励等数据
-- **回合管理**: 支持标记成功回合并自动保存
-- **自动完成检测**: 可选的自动检测环境done并完成episode
-- **元数据**: 自动保存时间戳、任务信息、FPS 等元数据
-
-### 🎛️ 3. 控制功能
-- **环境重置**: 随时重置环境到初始状态
-- **录制控制**: 开始/停止录制，标记成功回合
-- **自动完成检测**: 检测环境done信号并自动保存演示
-- **频率控制**: 可配置的仿真频率和录制 FPS
-- **优雅退出**: 支持键盘中断并安全保存数据
-
-### 🔄 4. 数据转换功能
-- **LeRobot兼容**: 将Isaac Lab数据转换为LeRobot训练格式
-- **智能预处理**: 自动处理SE(3)到关节空间的动作转换
-- **多文件支持**: 批量转换多个录制文件
-- **HuggingFace集成**: 直接上传到HuggingFace Hub
-
-### 📊 5. 策略评估功能
-- **LeRobot策略兼容**: 支持评估LeRobot训练的策略
-- **Isaac Lab环境**: 在真实的物理仿真环境中测试
-- **自动格式转换**: 智能处理观测和动作数据格式
-- **详细指标**: 成功率、奖励、回合长度等评估指标
-- **视频录制**: 自动保存评估过程视频
-- **批量评估**: 支持多回合并行评估
+- v0.1.0: 开源初始版本，目前功能较为简陋。
+(当前只测试了`Isaac-Lift-Cube-Franka-IK-Rel-visumotor-v0`任务、`keyboard`遥操作、ACT,DP,SmolVLA三种policy)
 
 
 ## 🚦 快速开始
@@ -73,15 +41,6 @@ python src/lerobot/scripts/isaac/teleop_se3_agent_with_recording.py \
     --teleop_device keyboard \
     --enable_cameras
 
-# 使用 SpaceMouse 控制
-python src/lerobot/scripts/isaac/teleop_se3_agent_with_recording.py \
-    --task Isaac-Lift-Cube-Franka-v0 \
-    --teleop_device spacemouse
-
-# 使用游戏手柄控制
-python src/lerobot/scripts/isaac/teleop_se3_agent_with_recording.py \
-    --task Isaac-Lift-Cube-Franka-v0 \
-    --teleop_device gamepad
 ```
 
 ### 2. 带数据录制的遥操作
@@ -96,12 +55,6 @@ python src/lerobot/scripts/isaac/teleop_se3_agent_with_recording.py \
     --dataset_file ./datasets/lift_demos.hdf5 \
     --step_hz 30
 
-# 无限录制模式
-python src/lerobot/scripts/isaac/teleop_se3_agent_with_recording.py \
-    --task Isaac-Lift-Cube-Franka-v0 \
-    --teleop_device spacemouse \
-    --record \
-    --dataset_file ./datasets/lift_demos.hdf5
 
 # 自动完成检测模式 - 环境done时自动完成episode
 python src/lerobot/scripts/isaac/teleop_se3_agent_with_recording.py \
@@ -113,21 +66,6 @@ python src/lerobot/scripts/isaac/teleop_se3_agent_with_recording.py \
     --dataset_file ./datasets/auto_demos.hdf5
 ```
 
-### 3. 手部跟踪控制
-```bash
-# 单手相对控制
-python src/lerobot/scripts/isaac/teleop_se3_agent_with_recording.py \
-    --task Isaac-Lift-Cube-Franka-v0 \
-    --teleop_device handtracking \
-    --record
-
-# 双手绝对控制（GR1T2 任务）
-python src/lerobot/scripts/isaac/teleop_se3_agent_with_recording.py \
-    --task Isaac-PickPlace-GR1T2-v0 \
-    --teleop_device dualhandtracking_abs \
-    --enable_pinocchio \
-    --record
-```
 
 ## 🎯 控制说明
 
@@ -148,10 +86,6 @@ python src/lerobot/scripts/isaac/teleop_se3_agent_with_recording.py \
 - **自动保存**: 检测到完成时自动保存演示
 - **自动重置**: 完成后自动重置环境开始新的演示
 
-### 手部跟踪控制
-- **手势识别**: 自动检测开始/停止/重置手势
-- **实时跟踪**: 手部位置和姿态直接映射到机器人末端执行器
-- **夹爪控制**: 通过手指姿态控制夹爪开合
 
 
 ## 🔄 数据转换
@@ -164,7 +98,7 @@ python src/lerobot/scripts/isaac/teleop_se3_agent_with_recording.py \
 # 基本转换
 python src/lerobot/scripts/isaac/convert_isaac_to_lerobot.py \
     --input_files ./datasets/lift_demos.hdf5 \
-    --output_repo_id "cyx/franka-lift-dataset" \
+    --output_repo_id "username/franka-lift-dataset" \
     --task "Lift cube to 20cm height"
 
 # 多文件转换
@@ -175,12 +109,6 @@ python src/lerobot/scripts/isaac/convert_isaac_to_lerobot.py \
     --fps 30 \
     --skip_frames 5
 
-# 转换并上传到HuggingFace Hub
-python src/lerobot/scripts/isaac/convert_isaac_to_lerobot.py \
-    --input_files ./datasets/lift_demos.hdf5 \
-    --output_repo_id "username/franka-lift-dataset" \
-    --task "Lift cube to 20cm height" \
-    --push_to_hub
 ```
 
 ### 转换参数说明
@@ -204,15 +132,18 @@ python src/lerobot/scripts/isaac/convert_isaac_to_lerobot.py \
   - `observation.images.main_cam`: 主视角相机图像 (224×224×3)
   - `observation.images.wrist_cam`: 手腕相机图像 (224×224×3)
 
-### 数据预处理
-
-转换脚本会自动进行以下预处理：
-
-1. **动作保持**: 保持原始的SE(3)位姿增量和夹爪命令
-2. **关节状态**: 保持Isaac Lab的关节角度（弧度制）
-3. **图像格式**: 保持原始的224×224 RGB格式
-4. **数据类型**: 统一转换为float32格式
-5. **帧同步**: 确保观测和动作的时间对齐
+## 🏋️‍♂️ 策略训练
+使用lerobot训练脚本对policy进行训练。
+```bash
+python src/lerobot/scripts/train.py \
+  --dataset.repo_id=${HF_USER}/franka-lift-dataset \
+  --policy.type=act \    # 选择任意lerobot支持的policy
+  --output_dir=outputs/train/act_franka-lift-dataset \
+  --job_name=act_franka-lift-dataset \
+  --policy.device=cuda \
+  --wandb.enable=true \
+  --policy.repo_id=${HF_USER}/my_policy
+```
 
 
 ## 📊 策略评估
@@ -238,15 +169,6 @@ python src/lerobot/scripts/isaac/eval_policy_isaac.py \
     --max_videos 5 \
     --output_dir ./eval_results
 
-# 自定义评估设置
-python src/lerobot/scripts/isaac/eval_policy_isaac.py \
-    --policy_path "username/my-policy" \
-    --task Isaac-Lift-Cube-Franka-IK-Rel-visumotor-v0 \
-    --n_episodes 50 \
-    --step_hz 30 \
-    --max_episode_length 500 \
-    --policy_device cuda \
-    --output_dir ./detailed_eval
 ```
 
 ### 评估参数说明

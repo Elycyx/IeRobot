@@ -173,3 +173,5 @@ outputs/
 
 # Dev folders
 .cache/*
+
+piper/

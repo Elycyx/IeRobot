@@ -22,6 +22,7 @@ cd ierobot
 
 2. **安装IsaacLab**
 ```bash
+cd ierobot
 git clone https://github.com/Elycyx/IsaacLab.git
 ```
 然后按照IsaacLab官方的[安装教程](https://isaac-sim.github.io/IsaacLab/main/source/setup/installation/pip_installation.html)进行安装。

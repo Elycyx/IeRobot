@@ -2,10 +2,12 @@
 
 🤖 **IeRobot** 集成了LeRobot和Isaac Lab，提供从数据收集、策略训练到部署的Isaac环境中的完整解决方案。
 
+https://github.com/user-attachments/assets/a6e338a7-ccce-4278-92e5-08bb4c253ea9
+
 ## 📝 更新日志
 
 - v0.1.0: 开源初始版本，目前功能较为简陋。
-(当前只测试了`Isaac-Lift-Cube-Franka-IK-Rel-visumotor-v0`任务、`keyboard`遥操作、ACT,DP,SmolVLA三种policy)
+(当前只测试了`Isaac-Lift-Cube-Franka-IK-Rel-visumotor-v0`任务、`keyboard`遥操作、ACT, DP, SmolVLA三种policy)
 
 
 ## 🚦 快速开始

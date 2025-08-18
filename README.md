@@ -217,10 +217,3 @@ python src/lerobot/scripts/isaac/eval_policy_isaac.py \
 ## 📄 许可证
 
 本项目基于 [LeRobot](https://github.com/huggingface/lerobot) 和 [Isaac Lab](https://github.com/isaac-sim/IsaacLab) 项目，参考[LeIsaac](https://github.com/LightwheelAI/leisaac) 项目，遵循 BSD-3-Clause 许可证。
-
-## 🤝 贡献
-
-欢迎提交问题报告和功能请求。请确保：
-1. 代码符合项目风格指南
-2. 添加适当的文档和注释
-3. 包含必要的测试用例

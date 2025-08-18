@@ -1,5 +1,10 @@
 # 🚀 IeRobot: LeRobot + Isaac
 
+[![Python](https://img.shields.io/badge/python-3.10-blue.svg)](https://docs.python.org/3/whatsnew/3.10.html)
+[![IsaacSim](https://img.shields.io/badge/IsaacSim-4.5.0-green.svg)](https://docs.isaacsim.omniverse.nvidia.com/4.5.0/index.html)
+[![IsaacLab](https://img.shields.io/badge/IsaacLab-2.1.1-svg)](https://isaac-sim.github.io/IsaacLab/v2.1.1/index.html)
+[![LeRobot](https://img.shields.io/badge/LeRobot-0.3.2-yellow.svg)](https://github.com/huggingface/lerobot)
+
 🤖 **IeRobot** 集成了LeRobot和Isaac Lab，提供从数据收集、策略训练到部署的Isaac环境中的完整解决方案。
 
 https://github.com/user-attachments/assets/a6e338a7-ccce-4278-92e5-08bb4c253ea9
